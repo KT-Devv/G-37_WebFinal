@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Preview - Career Atlas</title>
+<style>
+    /* Include the same styles as the form page */
+    body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; padding: 2rem; }
+    .preview-container { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    h3 { font-size: 1.25rem; color: #4b5563; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; }
+    .preview-section { margin-bottom: 2rem; }
+    .preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .preview-item { color: #4b5563; margin: 0.5rem 0; }
+    .button { padding: 0.75rem 1.5rem; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+</style>
+</head>
+<body>
+<div class="preview-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1 style="font-size: 2rem; color: #2563eb; margin: 0;">Job Preview</h1>
+    <button onclick="window.history.back()" class="button">← Go Back</button>
+    </div>
+
+    <div id="preview-content">
+    <!-- Preview content will be populated by JavaScript -->
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+    <button onclick="window.history.back()" class="button">Edit Posting</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const previewData = JSON.parse(sessionStorage.getItem('jobPreviewData'));
+    const previewContent = document.getElementById('preview-content');
+
+    if (!previewData) {
+    previewContent.innerHTML = '<p>No preview data available. Please submit the form first.</p>';
+    return;
+    }
+
+    const salaryRange = previewData.minSalary || previewData.maxSalary 
+    ? `${previewData.currency} ${previewData.minSalary || ''} - ${previewData.maxSalary || ''}${previewData.negotiable ? ' (Negotiable)' : ''}`
+    : 'Not specified';
+
+    const applicationMethod = previewData.applyValue 
+    ? `${previewData.applyMethod}: ${previewData.applyValue}`
+    : 'Not specified';
+
+    const additionalOptions = [
+    previewData.remote && 'Remote-friendly',
+    previewData.visa && 'Visa sponsorship',
+    previewData.hideCompany && 'Hide company'
+    ].filter(Boolean).join(' · ');
+
+    previewContent.innerHTML = `
+    <div class="preview-section">
+        <h3>Job Details</h3>
+        <div class="preview-grid">
+        <div>
+            <p class="preview-item"><strong>Job Title:</strong> ${previewData.jobTitle}</p>
+            <p class="preview-item"><strong>Company:</strong> ${previewData.companyName}</p>
+        </div>
+        <div>
+            <p class="preview-item"><strong>Location:</strong> ${previewData.location}</p>
+            <p class="preview-item"><strong>Country:</strong> ${previewData.country}</p>
+        </div>
+        </div>
+    </div>
+
+    <div class="preview-section">
+        <h3>Job Type</h3>
+        <p class="preview-item">${previewData.jobType} · ${previewData.jobCategory}</p>
+    </div>
+
+    <div class="preview-section">
+        <h3>Job Description</h3>
+        <p class="preview-item" style="white-space: pre-wrap;">${previewData.jobDescription}</p>
+    </div>
+
+    <div class="preview-section">
+        <h3>Salary Range</h3>
+        <p class="preview-item">${salaryRange}</p>
+    </div>
+
+    <div class="preview-section">
+        <h3>Application Information</h3>
+        <p class="preview-item"><strong>Deadline:</strong> ${previewData.deadline || 'Not specified'}</p>
+        <p class="preview-item"><strong>How to Apply:</strong> ${applicationMethod}</p>
+    </div>
+
+    <div class="preview-section">
+        <h3>Additional Options</h3>
+        <p class="preview-item">${additionalOptions || 'None selected'}</p>
+    </div>
+    `;
+});
+</script>
+</body>
+</html>
